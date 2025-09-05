@@ -1,0 +1,6 @@
+# SeoulUnleash
+Cool name but dangerous code
+
+# About
+Its really just a malware loader, downloads zip, unzips it, and runs the containing executable, this is just a hobby project so 
+dont use this for dangerous purposes
