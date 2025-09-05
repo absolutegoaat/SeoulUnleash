@@ -26,14 +26,7 @@ banner = '''
 
 print(Fore.MAGENTA + banner + Style.RESET_ALL)
 
-def check_py_version():
-    if sys.version_info >= (3, 6):
-        print(Fore.GREEN + "Python Version is A-OK!" + Style.RESET_ALL + "\n")
-    else:
-        print(Fore.RED + "Python Version is not supported! Please use Python 3.6 or higher." + Style.RESET_ALL)
-        sys.exit(0)
 def main():
-    check_py_version()
     userinput = input("SEOUL >> ").lower()
     if userinput == "exit":
         print(Fore.YELLOW + "[-] Exiting SeoulUnleash..." + Style.RESET_ALL)
