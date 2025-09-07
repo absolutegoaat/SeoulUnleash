@@ -39,12 +39,12 @@ def main():
         directory = input('Enter the directory to serve the zip file: ')
         if platform.system() == "Windows":
             subprocess.run(["python", "-m", "http.server", "8080", "--directory", directory])
-            print(Fore.GREEN + '[*] Server started at port 8080' + Style.RESET_ALL)
-            print(Fore.BLUE + '[*] Its Recommended to open another terminal and make the executable' + Style.RESET_ALL)
+            print(Fore.GREEN + '[+] Server started at port 8080' + Style.RESET_ALL)
+            print(Fore.BLUE + '[*] Its Recommended to open another terminal and make the executable ignore this if you have already' + Style.RESET_ALL)
         else:
             subprocess.run(["python3", "-m", "http.server", "8080", "--directory", directory])
-            print(Fore.GREEN + '[*] Server started at port 8080' + Style.RESET_ALL)
-            print(Fore.BLUE + '[*] Its Recommended to open another terminal and make the executable' + Style.RESET_ALL)
+            print(Fore.GREEN + '[+] Server started at port 8080' + Style.RESET_ALL)
+            print(Fore.BLUE + '[*] Its Recommended to open another terminal and make the executable ignore this if you have already' + Style.RESET_ALL)
     elif userinput == "help":
         print(Fore.MAGENTA + """
 Available commands:
