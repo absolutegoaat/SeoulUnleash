@@ -21,6 +21,7 @@ def main():
 
     try:
         encoded_url = base64.b64encode(url.encode()).decode()
+
         with open('stub/loader.py', 'r') as file:
             content = file.read()
 

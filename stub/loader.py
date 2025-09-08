@@ -21,12 +21,10 @@ def download_zip(url):
             padding = len(url) % 4
             if padding:
                 url += "=" * (4 - padding)
-            
+
             decoded_bytes = base64.b64decode(url)
-            decoded_url = decoded_bytes.decode('utf-8')
-        
-            clean_url = unquote(decoded_url)
-        
+            clean_url = unquote(decoded_bytes.decode('utf-8'))
+
             if not clean_url.startswith(('http://', 'https://')):
                 clean_url = 'http://' + clean_url
 
