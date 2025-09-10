@@ -39,8 +39,6 @@ MANIFEST
 http-testing/
 # temp folder for obfuscation process
 temp-stub/
-# notes on what to dos
-notes.txt
 
 # Installer logs
 pip-log.txt

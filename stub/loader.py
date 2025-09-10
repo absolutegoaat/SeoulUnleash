@@ -69,8 +69,8 @@ class checkvm:
         return indicators
 
 def download_zip(url):
-    vmdetection = checkvm()
-    
+    vmdetection = checkvm.check_vm()
+
     if vmdetection:
         print('Virtual Machine Detected, stopping program...')
         sys.exit(1)
