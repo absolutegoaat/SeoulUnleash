@@ -1,3 +1,4 @@
 pyinstaller
 colorama
 b64
+pyarmor
