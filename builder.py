@@ -19,6 +19,13 @@ def main():
     else:
         detectvms = False
 
+    obsfucate = input('Obsfuscate? (y/n): ')
+    obsfucate = obsfucate.strip().lower()
+    if obsfucate == 'y':
+        obsfucate = True
+    else:
+        obsfucate = False
+
     try:
         encoded_url = base64.b64encode(url.encode()).decode()
 
